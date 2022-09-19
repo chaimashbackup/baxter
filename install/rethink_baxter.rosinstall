@@ -1,0 +1,25 @@
+repositories:
+  baxter:
+    type: git
+    url: https://github.com/RethinkRobotics/baxter.git
+    version: release-1.2.0
+  baxter_common:
+    type: git
+    url: https://github.com/ME495-EmbeddedSystems/baxter_common.git
+    version: release-1.2.0-melodic
+  baxter_examples:
+    type: git
+    url: https://github.com/ME495-EmbeddedSystems/baxter_examples.git
+    version: noetic-devel
+  baxter_interface:
+    type: git
+    url: https://github.com/ME495-EmbeddedSystems/baxter_interface.git
+    version: development
+  baxter_simulator:
+    type: git
+    url: https://github.com/ME495-EmbeddedSystems/baxter_simulator.git
+    version: noetic-devel
+  baxter_tools:
+    type: git
+    url: https://github.com/ME495-EmbeddedSystems/baxter_tools.git
+    version: noetic-devel
