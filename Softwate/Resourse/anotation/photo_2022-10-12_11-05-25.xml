@@ -1,0 +1,26 @@
+<annotation>
+	<folder>ML</folder>
+	<filename>photo_2022-10-12_11-05-25.jpg</filename>
+	<path>/home/heorhii/Documents/BaxterRobo/ML/photo_2022-10-12_11-05-25.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>960</width>
+		<height>1280</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>grid</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>104</xmin>
+			<ymin>224</ymin>
+			<xmax>915</xmax>
+			<ymax>1020</ymax>
+		</bndbox>
+	</object>
+</annotation>
