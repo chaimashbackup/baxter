@@ -85,3 +85,9 @@ Then
 For image annotation we may need LabelImg
 
 >pip install labelImg
+
+
+
+source /opt/ros/noetic/setup.bash
+
+catkin_make -DPYTHON_EXECUTABLE=/usr/bin/python3

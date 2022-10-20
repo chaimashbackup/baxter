@@ -1,3 +1,8 @@
 ################################################################################
 .vscode/
 **/.DS_Store
+.catkin_workspace
+build/
+devel/
+src/
+ThirdParty/

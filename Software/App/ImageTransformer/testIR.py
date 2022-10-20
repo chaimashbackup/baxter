@@ -3,24 +3,26 @@
 # rospy - ROS Python API
 import rospy
 import rospkg
-
 import baxter_interface
 
 from sensor_msgs.msg import (
-    Range,
-    String
+    Range
 )
 
+irRange = Range()
 
 def callback(data):
-    rospy.loginfo(rospy.get_name() + ": Range = %f" % data.range)
+    if (data.range != irRange.range):
+        irRange.range = data.range
+        rospy.loginfo("Range = %s",irRange.range)
 
 def irtest():
     rospy.init_node('ir', anonymous=True)
-    rospy.Subscriber("/robot/range/left_hand_range", Range, callback)
+    rospy.Subscriber("/robot/range/right_hand_range/state", Range, callback)
     rospy.spin()
 
 if __name__=='__main__':
+    print("start ir test")
     irtest()
 
 
