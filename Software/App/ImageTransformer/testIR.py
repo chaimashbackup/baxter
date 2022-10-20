@@ -9,16 +9,26 @@ from sensor_msgs.msg import (
     Range
 )
 
-irRange = Range()
+irLeftRange = Range()
+irRightRange = Range()
 
-def callback(data):
-    if (data.range != irRange.range):
-        irRange.range = data.range
-        rospy.loginfo("Range = %s",irRange.range)
+
+def rightHandIR(data):
+    name = 'right'	
+    if (data.range != irRightRange.range):
+        irRightRange.range = data.range
+        rospy.loginfo("%s hand range = %s", name, irRightRange.range)
+
+def leftHandIR(data):
+    name = 'left'
+    if (data.range != irLeftRange.range):
+        irLeftRange.range = data.range
+        rospy.loginfo("%s hand range = %s", name, irLeftRange.range)
 
 def irtest():
     rospy.init_node('ir', anonymous=True)
-    rospy.Subscriber("/robot/range/right_hand_range/state", Range, callback)
+    rospy.Subscriber("/robot/range/left_hand_range/state", Range, leftHandIR)
+    rospy.Subscriber("/robot/range/right_hand_range/state", Range, rightHandIR)
     rospy.spin()
 
 if __name__=='__main__':
