@@ -1,0 +1,1 @@
+roslaunch baxter_moveit_config baxter_grippers.launch
