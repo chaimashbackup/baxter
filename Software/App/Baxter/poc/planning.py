@@ -33,14 +33,11 @@ def initPose():
 if __name__ == '__main__':
     
     rospy.init_node('planning', log_level=rospy.INFO)
-
-    
     bm = baxterMove()
     cm = camModule()
     ir = irModule()
 
     time.sleep(3)
-    # bm.setPose(0.15, -0.05, -0.05)
     lenthIR = ir.getRange()
     limit = ir.getLimit()
     print(ir.getRange())
@@ -59,7 +56,7 @@ if __name__ == '__main__':
     while i <= 5:
         time.sleep(1)
         cm.getImage("image" + str(i) + ".jpg")
-        bm.setPose(0.0, 0.0, 0.0)
+        bm.setPose(0.0, 0.0, -0.05)
         print(ir.getRange())
         i+=1
 
