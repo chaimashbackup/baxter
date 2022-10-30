@@ -12,14 +12,14 @@ from sensor_msgs.msg import (
 class irModule():
     irRange = Range()
     def __init__(self) -> None:
-        rospy.init_node('IR', anonymous=True)
+        # rospy.init_node('IR', anonymous=True)
         rospy.Subscriber("/robot/range/left_hand_range/state", Range, self.leftHandIR)
-        rospy.spin()
+        
 
     def leftHandIR(self, data):
         if (data.range != self.irRange.range):
             self.irRange = data
-            rospy.loginfo("%s hand range = %s", "left IR", self.irRange.range)
+            # rospy.loginfo("%s hand range = %s", "left IR", self.irRange.range)
 
     def getRange(self):
         if self.irRange is None:

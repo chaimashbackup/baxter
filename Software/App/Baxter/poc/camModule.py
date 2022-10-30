@@ -23,7 +23,7 @@ class camModule():
     bridge = cv_bridge.CvBridge() 
     image = None
     def __init__(self) -> None:
-        rospy.Subscriber('/cameras/left_hand_camera/image', Image, self.amAction)
+        rospy.Subscriber('/cameras/left_hand_camera/image', Image, self.camAction)
 
     def camAction(self, data):
         self.image = self.bridge.imgmsg_to_cv2(data, desired_encoding="passthrough")
