@@ -12,6 +12,12 @@ import irModule
 from baxterMove import baxterMove
 from camModule import camModule
 from irModule import irModule
+from DtGripper import DtGripper
+
+
+from sensor_msgs.msg import (
+    JointState
+)
 
 leftInitState = {
     'left_e0': -1.1884516154142244,
@@ -28,20 +34,22 @@ def initPose():
     limb = baxter_interface.Limb('left')
     limb.move_to_joint_positions(leftInitState)
 
-
+def cb(data):
+    print(data)
 
 if __name__ == '__main__':
     
     rospy.init_node('planning', log_level=rospy.INFO)
-    bm = baxterMove()
-    cm = camModule()
-    ir = irModule()
+    # initPose()
+    bm = baxterMove() 
+    # cm = camModule()
+    # ir = irModule()
 
-    time.sleep(3)
-    lenthIR = ir.getRange()
-    limit = ir.getLimit()
-    print(ir.getRange())
-    print(ir.getLimit())
+    # time.sleep(3)
+    # lenthIR = ir.getRange()
+    # limit = ir.getLimit()
+    # print(ir.getRange())
+    # print(ir.getLimit())
 
     # lim = 0.30
     # while ir.getRange() >= lim:
@@ -52,16 +60,21 @@ if __name__ == '__main__':
     #     lenthIR = ir.getLimit()
 
 
-    i = 0
-    while i <= 5:
-        time.sleep(1)
-        cm.getImage("image" + str(i) + ".jpg")
-        bm.setPose(0.0, 0.0, -0.05)
-        print(ir.getRange())
-        i+=1
+    # i = 0
+    # while i <= 5:
+    #     time.sleep(1)
+    #     cm.getImage("image" + str(i) + ".jpg")
+    #     bm.setPose(0.0, 0.0, -0.05)
+    #     print(ir.getRange())
+    #     i+=1
 
-
+    bm.setPose(0.0, 0.0, 0.1)
+    time.sleep(5)
+    bm.setPose(0.0, 0.0, 0.1)
     # initPose()
 
-    rospy.spin()
+    # gr = DtGripper()
+    # gr.command(0, 100.0, 10.0)
+    # gr.wait(0)
+    # rospy.spin()
 

@@ -1,7 +1,7 @@
 import sys
 import enum
 import rospy
-import actionLib
+import actionlib
 import baxter_interface
 
 from control_msgs.msg import (
@@ -28,10 +28,10 @@ class DtGripper():
     def __init__(self) -> None:
         for i in self.gripperName:
             if i == self.gripperName.left:
-                self._clientGripperLeft = actionLib.SimpleActionClient(self.leftGripper, GripperCommandAction)
+                self._clientGripperLeft = actionlib.SimpleActionClient(self.leftGripper, GripperCommandAction)
                 self._leftGoal = GripperCommandGoal()
             elif i == self.gripperName.right:
-                self._clientGripperLeft = actionLib.SimpleActionClient(self.rightGripper, GripperCommandAction)
+                self._clientGripperLeft = actionlib.SimpleActionClient(self.rightGripper, GripperCommandAction)
                 self._rightGoal = GripperCommandGoal()
 
     
