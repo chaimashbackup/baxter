@@ -12,7 +12,7 @@ from sensor_msgs.msg import (
 
 
 data = []
-path = "./coord.json"
+path = "./coord2.json"
 chek = True
 # limb_left = baxter_interface.Limb("left")
 
