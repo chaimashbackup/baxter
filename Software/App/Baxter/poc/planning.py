@@ -68,9 +68,9 @@ if __name__ == '__main__':
     #     print(ir.getRange())
     #     i+=1
 
-    bm.setPose(0.0, 0.0, 0.1)
-    time.sleep(5)
-    bm.setPose(0.0, 0.0, 0.1)
+    # bm.setPose(0.0, 0.0, 0.1)
+    # time.sleep(5)
+    # bm.setPose(0.0, 0.0, 0.1)
     # initPose()
 
     # gr = DtGripper()

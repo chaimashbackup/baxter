@@ -32,7 +32,9 @@ class DtDetection(object):
     _cord = _coord()
     _confidence:float
     def __init__(self) -> None:
-        self._model = torch.hub.load('../../../ThirdParty/yolov5/', 'custom',
+        # self._model = torch.hub.load('../../../ThirdParty/yolov5/', 'custom',
+        self._model = torch.hub.load('/home/lev/BaxterRobo/yolov5', 'custom',
+
         path='roboBaxter.onnx', source='local')
 
     def getCoordinates(self, image:np.ndarray):
@@ -77,22 +79,22 @@ def find_squares(img):
 
 if __name__ == '__main__':
 
-    img = './image/image1.jpg'
+    img = './camTest.jpg'
     image1 = cv2.imread(img)
     DtD = DtDetection()
     cord = DtD.getCoordinates(image1)
     if cord[0] is True:
         print(cord[1])
-        # cv2.rectangle(image1, (cord[1].x1, cord[1].y1), (cord[1].x2, cord[1].y2), (0,255,0), 1)
-        # cv2.imshow("",image1)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-
-
-        squares = find_squares(image1)
-        cv2.drawContours( image1, squares, -1, (0, 255, 0), 1)
-        cv2.imshow('squares', image1)
+        cv2.rectangle(image1, (cord[1].x1, cord[1].y1), (cord[1].x2, cord[1].y2), (0,255,0), 1)
+        cv2.imshow("",image1)
         cv2.waitKey(0)
-        cv2.destroyAllWindows()			
+        cv2.destroyAllWindows()
+
+
+        # squares = find_squares(image1)
+        # cv2.drawContours( image1, squares, -1, (0, 255, 0), 1)
+        # cv2.imshow('squares', image1)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()			
     else:
         print("----")
