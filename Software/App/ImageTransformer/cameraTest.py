@@ -19,7 +19,8 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import Bool
 
 bridge = cv_bridge.CvBridge() 
-filename = 'camTest.jpg'
+filename = 'cam0.jpg'
+
 
 def camActivate(im):
     cv_image = bridge.imgmsg_to_cv2(im, desired_encoding="passthrough")
