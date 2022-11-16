@@ -6,7 +6,7 @@ import os
 
 cap = cv2.VideoCapture(0)
 
-directory = 'dataset/train/image'
+directory = 'image22'
 if not os.path.exists(directory):
     os.mkdir(directory)
 
