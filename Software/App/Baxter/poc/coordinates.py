@@ -77,22 +77,30 @@ if __name__ == '__main__':
             setAngles(initData[0], angles)
             
             if angles['left_e0'] != 0.0:
-                time.sleep(4)
-                angles['left_w2'] = 0.0
+                time.sleep(1)
+                # angles['left_w2'] = 0.0
                 left_limb.move_to_joint_positions(angles)
-                
                 clearAngles(angles)
-            # setAngles(coordPos0[i], angles)
-            # time.sleep(4)
-            # if angles['left_e0'] != 0.0:
-            #     left_limb.move_to_joint_positions(angles)
-            #     clearAngles(angles)
+
+            setAngles(coordPos1[i], angles)
+            time.sleep(1)
+            if angles['left_e0'] != 0.0:
+                left_limb.move_to_joint_positions(angles)
+                clearAngles(angles)
+
+            setAngles(coordPos0[i], angles)
+            time.sleep(1)
+            if angles['left_e0'] != 0.0:
+                left_limb.move_to_joint_positions(angles)
+                clearAngles(angles)
             
-            # setAngles(coordPos1[i], angles)
-            # time.sleep(4)
-            # if angles['left_e0'] != 0.0:
-            #     left_limb.move_to_joint_positions(angles)
-            #     clearAngles(angles)
             left_gripper.close(block=False)
-            time.sleep(4)
+            time.sleep(1)
+
+            setAngles(coordPos1[i], angles)
+            time.sleep(1)
+            if angles['left_e0'] != 0.0:
+                left_limb.move_to_joint_positions(angles)
+                clearAngles(angles)
+
             left_gripper.open(block=False)
