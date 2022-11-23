@@ -8,7 +8,7 @@ import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 
-hostName = "10.0.0.10"
+hostName = "0.0.0.0"
 serverPort = 8080
 
 
