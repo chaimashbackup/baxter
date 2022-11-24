@@ -1,0 +1,7 @@
+
+# sudo ip addr add 10.0.0.250/24 dev enp2s0
+
+# nmap -p 11311 10.0.0.0/24
+
+# export ROS_MASTER_URI=http://10.0.0.221:11311
+# export ROS_IP=10.0.0.250

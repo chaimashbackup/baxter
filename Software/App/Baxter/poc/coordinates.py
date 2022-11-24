@@ -197,11 +197,11 @@ if __name__ == '__main__':
 
         for i in range(len(coordPos0)):
         # for i in range(3):
-            if i <= 2:
-                continue
-            print(i)
+            # if i <= 2:
+            #     continue
+            # print(i)
             w = 0.0
-            for j in range(8):
+            for j in range(16):
                 print("____%s____", str(i))
                 setAngles(initData[0], angles)
                 
