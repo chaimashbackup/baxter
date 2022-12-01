@@ -21,7 +21,10 @@ class BaxterServer(BaseHTTPRequestHandler):
         self.handlers = []
         self.add_handler('/hello2', self.hello2)
         self.add_handler('/hello', self.hello1)
-        self.add_handler('/initial', self.initial_position)
+        self.add_handler('/initial', self.initial_position) 
+        self.add_handler('/object1', self.object1)
+        self.add_handler('/object2', self.object2)
+        self.add_handler('/put', self.put) 
         super(BaxterServer, self).__init__(request, client_address, server)
 
     def add_handler(self, path_prefix, handler):
@@ -34,6 +37,82 @@ class BaxterServer(BaseHTTPRequestHandler):
                 break
         else:
             self.default_handler()
+
+
+    def put(self):
+        cmd = "./../detect/put.py"
+        proc = subprocess.Popen(
+            cmd,
+            encoding='utf-8',
+            env=os.environ,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=True,
+        )
+        stdout, stderr = proc.communicate()
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(bytes("<html><head><title>Put</title></head>", "utf-8"))
+        self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+        self.wfile.write(bytes("<body>", "utf-8"))
+        self.wfile.write(bytes("<p>Put.</p>", "utf-8"))
+        self.wfile.write(bytes(str(stdout), "utf-8"))
+        self.wfile.write(bytes(str(stderr), "utf-8"))
+        self.wfile.write(bytes(str(proc.returncode), "utf-8"))
+        message = threading.currentThread().getName()
+        self.wfile.write(bytes(message, 'utf-8'))
+        self.wfile.write(bytes("</body></html>", "utf-8"))
+
+    def object1(self):
+        cmd = "./../detect/object1.py"
+        proc = subprocess.Popen(
+            cmd,
+            encoding='utf-8',
+            env=os.environ,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=True,
+        )
+        stdout, stderr = proc.communicate()
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(bytes("<html><head><title>Object1</title></head>", "utf-8"))
+        self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+        self.wfile.write(bytes("<body>", "utf-8"))
+        self.wfile.write(bytes("<p>Object1.</p>", "utf-8"))
+        self.wfile.write(bytes(str(stdout), "utf-8"))
+        self.wfile.write(bytes(str(stderr), "utf-8"))
+        self.wfile.write(bytes(str(proc.returncode), "utf-8"))
+        message = threading.currentThread().getName()
+        self.wfile.write(bytes(message, 'utf-8'))
+        self.wfile.write(bytes("</body></html>", "utf-8"))
+
+    def object2(self):
+        cmd = "./../detect/object2.py"
+        proc = subprocess.Popen(
+            cmd,
+            encoding='utf-8',
+            env=os.environ,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=True,
+        )
+        stdout, stderr = proc.communicate()
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(bytes("<html><head><title>Object2</title></head>", "utf-8"))
+        self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+        self.wfile.write(bytes("<body>", "utf-8"))
+        self.wfile.write(bytes("<p>Object2.</p>", "utf-8"))
+        self.wfile.write(bytes(str(stdout), "utf-8"))
+        self.wfile.write(bytes(str(stderr), "utf-8"))
+        self.wfile.write(bytes(str(proc.returncode), "utf-8"))
+        message = threading.currentThread().getName()
+        self.wfile.write(bytes(message, 'utf-8'))
+        self.wfile.write(bytes("</body></html>", "utf-8"))
 
     def hello1(self):
         cmd = "/home/lev/rethink_ws/hello1.py"
