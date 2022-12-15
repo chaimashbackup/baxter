@@ -35,8 +35,8 @@ from DtGetNumPosition import DtGetNumPosition
 from DtCameraBaxter import camModule
 
 coordPath = {   "init": "./json/initPos.json", 
-                "pose0": "./json/Pose0.json",
-                "pose1": "./json/Pose1.json",
+                "pose0": "./json/Pos0.json",
+                "pose1": "./json/Pos1.json",
                 "lastState": "./json/lastState.json" 
             }
 

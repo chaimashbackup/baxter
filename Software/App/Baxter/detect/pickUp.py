@@ -36,8 +36,8 @@ from DtCameraBaxter import camModule
 
 
 coordPath = {   "init": "./json/initPos.json", 
-                "pose0": "./json/Pose0.json",
-                "pose1": "./json/Pose1.json",
+                "pose0": "./json/Pos0.json",
+                "pose1": "./json/Pos1.json",
                 "lastState": "./json/lastState.json" 
             }
 
@@ -107,11 +107,14 @@ def clearAngles(angles):
 
 def detect(numObject:int = 1):
 
+    global initData
+    global coordPos0
+    global coordPos1    
 
     # create instances of classes for detection and pass trained models to them.
-    DtD     = DtDetection('./models/roboBaxter.onnx', "../../../ThirdParty/yolov5")
-    DtObj1  = DtDetection('./models/object1.onnx', "../../../ThirdParty/yolov5")
-    DtObj2  = DtDetection('./models/object2.onnx', "../../../ThirdParty/yolov5")
+    DtD     = DtDetection('./models/roboBaxter.onnx', "/home/lev/BaxterRobo/yolov5")
+    DtObj1  = DtDetection('./models/object1.onnx', "/home/lev/BaxterRobo/yolov5")
+    DtObj2  = DtDetection('./models/object2.onnx', "/home/lev/BaxterRobo/yolov5")
     
     #create node for ros
     rospy.init_node('obj' + str(numObject), anonymous=True)
@@ -135,6 +138,9 @@ def detect(numObject:int = 1):
 
         if initData is None or coordPos0 is None or coordPos1 is None:
             sys.exit(1)
+    else:
+        print("Error")
+        sys.exit(1)
 
     # check for exist files with last state
     if exists(coordPath['lastState']):
