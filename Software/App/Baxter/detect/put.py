@@ -36,10 +36,11 @@ from DtDetection import DtDetection
 from DtGetNumPosition import DtGetNumPosition
 from DtCameraBaxter import camModule
 
-coordPath = {   "init": "./json/initPos.json", 
-                "pose0": "./json/Pos0.json",
-                "pose1": "./json/Pos1.json",
-                "lastState": "./json/lastState.json" 
+dirname = os.path.dirname(__file__)
+coordPath = {   "init": os.path.join(dirname, "./json/initPos.json"),
+                "pose0": os.path.join(dirname, "./json/Pos0.json"),
+                "pose1": os.path.join(dirname, "./json/Pos1.json"),
+                "lastState": os.path.join(dirname, "./json/lastState.json"),
             }
 
 

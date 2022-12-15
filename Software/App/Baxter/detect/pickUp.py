@@ -34,11 +34,11 @@ from DtDetection import DtDetection
 from DtGetNumPosition import DtGetNumPosition
 from DtCameraBaxter import camModule
 
-
-coordPath = {   "init": "./json/initPos.json", 
-                "pose0": "./json/Pos0.json",
-                "pose1": "./json/Pos1.json",
-                "lastState": "./json/lastState.json" 
+dirname = os.path.dirname(__file__)
+coordPath = {   "init": os.path.join(dirname, "./json/initPos.json"),
+                "pose0": os.path.join(dirname, "./json/Pos0.json"),
+                "pose1": os.path.join(dirname, "./json/Pos1.json"),
+                "lastState": os.path.join(dirname, "./json/lastState.json"),
             }
 
 
@@ -112,9 +112,9 @@ def detect(numObject:int = 1):
     global coordPos1    
 
     # create instances of classes for detection and pass trained models to them.
-    DtD     = DtDetection('./models/roboBaxter.onnx', "/home/lev/BaxterRobo/yolov5")
-    DtObj1  = DtDetection('./models/object1.onnx', "/home/lev/BaxterRobo/yolov5")
-    DtObj2  = DtDetection('./models/object2.onnx', "/home/lev/BaxterRobo/yolov5")
+    DtD     = DtDetection(os.path.join(dirname, './models/roboBaxter.onnx'), "/home/lev/BaxterRobo/yolov5")
+    DtObj1  = DtDetection(os.path.join(dirname, './models/object1.onnx'), "/home/lev/BaxterRobo/yolov5")
+    DtObj2  = DtDetection(os.path.join(dirname, './models/object2.onnx'), "/home/lev/BaxterRobo/yolov5")
     
     #create node for ros
     rospy.init_node('obj' + str(numObject), anonymous=True)

@@ -2,6 +2,6 @@
     "pickUp": true,
     "gripper": true,
     "rotation": 0.0,
-    "numPose": 42,
+    "numPose": 35,
     "object": 1
 }
