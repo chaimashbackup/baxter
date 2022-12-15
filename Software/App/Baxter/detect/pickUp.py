@@ -66,6 +66,14 @@ lastState = {
 
 
 def exists(path):
+    """ path check function
+
+    Args:
+        path (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     try:
         os.stat(path)
     except OSError:
@@ -73,6 +81,12 @@ def exists(path):
     return True
 
 def setAngles(data, angles):
+    """ function to fill angle values from coordinate dataset
+
+    Args:
+        data (_type_): _description_
+        angles (_type_): _description_
+    """
     j = 2
     for i in angles.keys():
         angles[i] = data[j]
@@ -80,6 +94,11 @@ def setAngles(data, angles):
     print(angles)
 
 def clearAngles(angles):
+    """ function to reset the state of the angles
+
+    Args:
+        angles (_type_): _description_
+    """
     for i in angles.keys():
         angles[i] = 0.0
 
@@ -88,15 +107,24 @@ def clearAngles(angles):
 
 def detect(numObject:int = 1):
 
+
+    # create instances of classes for detection and pass trained models to them.
     DtD     = DtDetection('./models/roboBaxter.onnx', "../../../ThirdParty/yolov5")
     DtObj1  = DtDetection('./models/object1.onnx', "../../../ThirdParty/yolov5")
     DtObj2  = DtDetection('./models/object2.onnx', "../../../ThirdParty/yolov5")
     
+    #create node for ros
+    rospy.init_node('obj' + str(numObject), anonymous=True)
 
-    rospy.init_node('obj1', anonymous=True)
+
+    #create an instance to control the left limb
     left_limb = Limb('left')
+
+    #create an instance to control the left gripper
     left_gripper = Gripper('left')
 
+
+    # check for exist files with coordinate dataset
     if exists(coordPath['init']) and exists(coordPath['pose0']) and exists(coordPath['pose1']):
         with open(coordPath['init'], 'r') as jsonFile:
             initData = json.load(jsonFile)
@@ -108,7 +136,7 @@ def detect(numObject:int = 1):
         if initData is None or coordPos0 is None or coordPos1 is None:
             sys.exit(1)
 
-
+    # check for exist files with last state
     if exists(coordPath['lastState']):
         with open(coordPath['lastState'], 'r') as jsonFile:
             lastState = json.load(jsonFile)
@@ -117,9 +145,13 @@ def detect(numObject:int = 1):
         with open(coordPath['lastState'], 'w') as jsonFile:
             json.dump(lastState, jsonFile, indent=4)
 
+
     if lastState['pickUp'] and lastState['object'] == numObject:
+        # if the robot is already in the requested state, then do nothing
         sys.exit(1)
     elif lastState['pickUp'] and lastState['object'] != numObject:
+        # if the robot holds another object in its grip, 
+        # then first you need to put it in its original position
         if lastState['gripper']:
             setAngles(coordPos0[lastState['numPose']], angles)
             if angles['left_e0'] != 0.0:
@@ -140,25 +172,32 @@ def detect(numObject:int = 1):
                 clearAngles(angles)
             time.sleep(1)
 
+    # move the robot to the init coordinates
     setAngles(initData[0], angles)
     if angles['left_e0'] != 0.0:
         left_limb.move_to_joint_positions(angles)
         clearAngles(angles)
     time.sleep(1)
 
+    # create a camera instance
     cm = camModule("left")
-    image = cm.getImage()
-    time.sleep(5)
+    time.sleep(5) 
 
-    
+    # get image from camera
+    image = cm.getImage()
+    time.sleep(1) 
+
+    # get the bounding box of the grid
     cord = DtD.getCoordinates(image)
     cv2.rectangle(image, (cord[1], cord[3]), (cord[2], cord[4]), (255,0,0), 1)
     # cv2.imshow("",image)
 
+    # get the bounding box of obj1
     cordO1  = DtObj1.getCoordinates(image)
     cv2.rectangle(image, (cordO1[1], cordO1[3]), (cordO1[2], cordO1[4]), (0,255,0), 1)
     # cv2.imshow("1",image)
-
+    
+    # get the bounding box of obj2
     cordO2  = DtObj2.getCoordinates(image)
     cv2.rectangle(image, (cordO2[1], cordO2[3]), (cordO2[2], cordO2[4]), (0,0,255), 1)
 
@@ -167,6 +206,7 @@ def detect(numObject:int = 1):
     elif numObject == 2:
         numPose = DtGetNumPosition(cord, cordO2)
     else: 
+        print("Invalid object number")
         sys.exit(1)
 
     adressPose = numPose.getNumPosition()
