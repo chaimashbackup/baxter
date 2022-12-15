@@ -161,6 +161,7 @@ def detect(numObject:int = 1):
         if lastState['gripper']:
             setAngles(coordPos0[lastState['numPose']], angles)
             if angles['left_e0'] != 0.0:
+                angles['left_w2'] = angles['left_w2'] + lastState['rotation']
                 left_limb.move_to_joint_positions(angles)
                 clearAngles(angles)
             time.sleep(1)
@@ -174,6 +175,7 @@ def detect(numObject:int = 1):
 
             setAngles(coordPos1[lastState['numPose']], angles)
             if angles['left_e0'] != 0.0:
+                angles['left_w2'] = angles['left_w2'] + lastState['rotation']
                 left_limb.move_to_joint_positions(angles)
                 clearAngles(angles)
             time.sleep(1)
@@ -194,18 +196,22 @@ def detect(numObject:int = 1):
     time.sleep(1) 
 
     # get the bounding box of the grid
-    cord = DtD.getCoordinates(image)
+    cord = DtD.getCoordinates(image, 0)
     cv2.rectangle(image, (cord[1], cord[3]), (cord[2], cord[4]), (255,0,0), 1)
     # cv2.imshow("",image)
 
     # get the bounding box of obj1
-    cordO1  = DtObj1.getCoordinates(image)
+    cordO1  = DtObj1.getCoordinates(image, 0)
     cv2.rectangle(image, (cordO1[1], cordO1[3]), (cordO1[2], cordO1[4]), (0,255,0), 1)
     # cv2.imshow("1",image)
     
     # get the bounding box of obj2
-    cordO2  = DtObj2.getCoordinates(image)
+    cordO2  = DtObj2.getCoordinates(image, 2)
     cv2.rectangle(image, (cordO2[1], cordO2[3]), (cordO2[2], cordO2[4]), (0,0,255), 1)
+    # cv2.imshow("1",image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # sys.exit(0)
 
     if numObject == 1:
         numPose = DtGetNumPosition(cord, cordO1)
@@ -216,18 +222,61 @@ def detect(numObject:int = 1):
         sys.exit(1)
 
     adressPose = numPose.getNumPosition()
+    print(f"{adressPose}")
+    
+    w = 0.0
+    rotate = []
+    for j in range(8):
+        if j <= 1:
+            continue
+        setAngles(initData[0], angles)
+        if angles['left_e0'] != 0.0:
+            time.sleep(0.1)
+            angles['left_w2'] = angles['left_w2'] + w
+            left_limb.move_to_joint_positions(angles)
+            clearAngles(angles)
+        if j != 0:
+            w = (float(j) / 10.0) * 2
+        
+        imageR = cm.getImage()
+        time.sleep(0.1) 
+        rot_cord = DtD.getCoordinates(imageR, 0)
+        cv2.rectangle(imageR, (rot_cord[1], rot_cord[3]), (rot_cord[2], rot_cord[4]), (255,0,0), 1)
+        rot_cordO1  = DtObj1.getCoordinates(imageR, 0)
+        cv2.rectangle(imageR, (rot_cordO1[1], rot_cordO1[3]), (rot_cordO1[2], rot_cordO1[4]), (0,255,0), 1)
+        rot_cordO2  = DtObj2.getCoordinates(imageR, 2)
+        cv2.rectangle(imageR, (rot_cordO2[1], rot_cordO2[3]), (rot_cordO2[2], rot_cordO2[4]), (0,0,255), 1)
+
+        if numObject == 1:
+            if rot_cordO1[0]:
+                rotate.append([(rot_cordO1[2] - rot_cordO1[1]) + (rot_cordO1[4] - rot_cordO1[3]), w])
+            else: 
+                sys.exit(0)
+        elif numObject == 2:
+            if rot_cordO2[0]:
+                rotate.append([(rot_cordO2[2] - rot_cordO2[1]) + (rot_cordO2[4] - rot_cordO2[3]), w])
+            else: 
+                sys.exit(0)
+        else: 
+            print("Invalid object number")
+            sys.exit(1)
+    lRotate = rotate[0][0]
+    for i in range(len(rotate)):
+        if lRotate >= rotate[i][0]:
+            lRotate = rotate[i][0]
+            w = rotate[i][1]
 
     setAngles(coordPos1[adressPose], angles)
     time.sleep(1)
     if angles['left_e0'] != 0.0:
-        angles['left_w2'] = angles['left_w2']
+        angles['left_w2'] = angles['left_w2'] + w
         left_limb.move_to_joint_positions(angles)
         clearAngles(angles)
 
     setAngles(coordPos0[adressPose], angles)
     time.sleep(1)
     if angles['left_e0'] != 0.0:
-        angles['left_w2'] = angles['left_w2']
+        angles['left_w2'] = angles['left_w2'] + w
         left_limb.move_to_joint_positions(angles)
         clearAngles(angles)
 
@@ -236,7 +285,7 @@ def detect(numObject:int = 1):
     setAngles(coordPos1[adressPose], angles)
     time.sleep(1)
     if angles['left_e0'] != 0.0:
-        angles['left_w2'] = angles['left_w2']
+        angles['left_w2'] = angles['left_w2'] + w
         left_limb.move_to_joint_positions(angles)
         clearAngles(angles)
 
@@ -244,6 +293,7 @@ def detect(numObject:int = 1):
     lastState['gripper'] = True
     lastState['numPose'] = adressPose
     lastState['object'] = numObject
+    lastState['rotation'] = w
 
     with open(coordPath['lastState'], 'w') as jsonFile:
         json.dump(lastState, jsonFile, indent=4)

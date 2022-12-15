@@ -1,7 +1,7 @@
 {
-    "pickUp": true,
-    "gripper": true,
-    "rotation": 0.0,
-    "numPose": 35,
-    "object": 1
+    "pickUp": false,
+    "gripper": false,
+    "rotation": 1.2,
+    "numPose": 0,
+    "object": 0
 }

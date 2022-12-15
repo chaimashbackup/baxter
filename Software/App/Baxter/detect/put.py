@@ -113,6 +113,7 @@ if __name__ == '__main__':
         if lastState['gripper']:
             setAngles(coordPos0[lastState['numPose']], angles)
             if angles['left_e0'] != 0.0:
+                angles['left_w2'] = angles['left_w2'] + lastState['rotation']
                 left_limb.move_to_joint_positions(angles)
                 clearAngles(angles)
             time.sleep(1)
@@ -124,6 +125,7 @@ if __name__ == '__main__':
 
             setAngles(coordPos1[lastState['numPose']], angles)
             if angles['left_e0'] != 0.0:
+                angles['left_w2'] = angles['left_w2'] + lastState['rotation']
                 left_limb.move_to_joint_positions(angles)
                 clearAngles(angles)
             time.sleep(1)
