@@ -2,7 +2,7 @@
 
 import cv2
 import torch
-import numpy as np 
+import numpy as np
 import onnx
 import onnxruntime as rt
 from dataclasses import dataclass
@@ -21,7 +21,8 @@ from baxter_interface import Gripper
 
 from multiprocessing.connection import wait
 import os
-import cv2, cv_bridge 
+import cv2
+import cv_bridge
 from baxter_interface.camera import CameraController
 
 from baxter_core_msgs.srv import (
@@ -37,12 +38,12 @@ from DtGetNumPosition import DtGetNumPosition
 from DtCameraBaxter import camModule
 
 dirname = os.path.dirname(__file__)
-coordPath = {   "init": os.path.join(dirname, "./json/initPos.json"),
-                "pose0": os.path.join(dirname, "./json/Pos0.json"),
-                "pose1": os.path.join(dirname, "./json/Pos1.json"),
-                "lastState": os.path.join(dirname, "./json/lastState.json"),
-            }
-
+coordPath = {
+    "init": os.path.join(dirname, "./json/initPos.json"),
+    "pose0": os.path.join(dirname, "./json/Pos0.json"),
+    "pose1": os.path.join(dirname, "./json/Pos1.json"),
+    "lastState": os.path.join(dirname, "./json/lastState.json"),
+}
 
 initData = None
 coordPos0 = None
@@ -59,12 +60,13 @@ angles = {
 }
 
 lastState = {
-    'pickUp'  : False,
-    'gripper' : False,
+    'pickUp': False,
+    'gripper': False,
     'rotation': 0.0,
-    'numPose' : 0,
-    'object'  : 0
+    'numPose': 0,
+    'object': 0
 }
+
 
 def exists(path):
     try:
@@ -73,12 +75,14 @@ def exists(path):
         return False
     return True
 
+
 def setAngles(data, angles):
     j = 2
     for i in angles.keys():
         angles[i] = data[j]
         j += 1
     print(angles)
+
 
 def clearAngles(angles):
     for i in angles.keys():
@@ -89,7 +93,6 @@ if __name__ == '__main__':
     left_limb = Limb('left')
     left_gripper = Gripper('left')
 
-
     if exists(coordPath['lastState']):
         with open(coordPath['lastState'], 'r') as jsonFile:
             lastState = json.load(jsonFile)
@@ -98,7 +101,13 @@ if __name__ == '__main__':
         with open(coordPath['lastState'], 'w') as jsonFile:
             json.dump(lastState, jsonFile, indent=4)
 
-    if exists(coordPath['init']) and exists(coordPath['pose0']) and exists(coordPath['pose1']):
+    if exists(
+        coordPath['init']
+    ) and exists(
+        coordPath['pose0']
+    ) and exists(
+        coordPath['pose1']
+    ):
         with open(coordPath['init'], 'r') as jsonFile:
             initData = json.load(jsonFile)
         with open(coordPath['pose0'], 'r') as jsonFile:
@@ -108,7 +117,7 @@ if __name__ == '__main__':
 
         if initData is None or coordPos0 is None or coordPos1 is None:
             sys.exit(1)
-    
+
     if lastState['pickUp']:
         if lastState['gripper']:
             setAngles(coordPos0[lastState['numPose']], angles)
@@ -129,7 +138,6 @@ if __name__ == '__main__':
                 left_limb.move_to_joint_positions(angles)
                 clearAngles(angles)
             time.sleep(1)
-
 
             setAngles(initData[0], angles)
             if angles['left_e0'] != 0.0:
