@@ -1,6 +1,6 @@
 import cv2
 import torch
-import numpy as np 
+import numpy as np
 import onnx
 import onnxruntime as rt
 from dataclasses import dataclass
@@ -19,7 +19,8 @@ from baxter_interface import Gripper
 
 from multiprocessing.connection import wait
 import os
-import cv2, cv_bridge 
+import cv2
+import cv_bridge
 from baxter_interface.camera import CameraController
 
 from baxter_core_msgs.srv import (
@@ -35,11 +36,12 @@ from DtGetNumPosition import DtGetNumPosition
 from DtCameraBaxter import camModule
 
 dirname = os.path.dirname(__file__)
-coordPath = {   "init": os.path.join(dirname, "./json/initPos.json"),
-                "pose0": os.path.join(dirname, "./json/Pos0.json"),
-                "pose1": os.path.join(dirname, "./json/Pos1.json"),
-                "lastState": os.path.join(dirname, "./json/lastState.json"),
-            }
+coordPath = {
+    "init": os.path.join(dirname, "./json/initPos.json"),
+    "pose0": os.path.join(dirname, "./json/Pos0.json"),
+    "pose1": os.path.join(dirname, "./json/Pos1.json"),
+    "lastState": os.path.join(dirname, "./json/lastState.json"),
+}
 
 
 initData = None
@@ -57,11 +59,11 @@ angles = {
 }
 
 lastState = {
-    'pickUp'  : False,
-    'gripper' : False,
+    'pickUp': False,
+    'gripper': False,
     'rotation': 0.0,
-    'numPose' : 0,
-    'object'  : 0
+    'numPose': 0,
+    'object': 0,
 }
 
 
@@ -80,6 +82,7 @@ def exists(path):
         return False
     return True
 
+
 def setAngles(data, angles):
     """ function to fill angle values from coordinate dataset
 
@@ -93,6 +96,7 @@ def setAngles(data, angles):
         j += 1
     print(angles)
 
+
 def clearAngles(angles):
     """ function to reset the state of the angles
 
@@ -103,22 +107,29 @@ def clearAngles(angles):
         angles[i] = 0.0
 
 
-
-
-def detect(numObject:int = 1):
+def detect(numObject: int=1):
 
     global initData
     global coordPos0
-    global coordPos1    
+    global coordPos1
 
-    # create instances of classes for detection and pass trained models to them.
-    DtD     = DtDetection(os.path.join(dirname, './models/roboBaxter.onnx'), "/home/lev/BaxterRobo/yolov5")
-    DtObj1  = DtDetection(os.path.join(dirname, './models/object1.onnx'), "/home/lev/BaxterRobo/yolov5")
-    DtObj2  = DtDetection(os.path.join(dirname, './models/object2.onnx'), "/home/lev/BaxterRobo/yolov5")
-    
+    # create instances of classes for detection and
+    # pass trained models to them.
+    DtD = DtDetection(
+        os.path.join(dirname, './models/roboBaxter.onnx'),
+        "/home/lev/BaxterRobo/yolov5"
+    )
+    DtObj1 = DtDetection(
+        os.path.join(dirname, './models/object1.onnx'),
+        "/home/lev/BaxterRobo/yolov5"
+    )
+    DtObj2 = DtDetection(
+        os.path.join(dirname, './models/object2.onnx'),
+        "/home/lev/BaxterRobo/yolov5"
+    )
+
     #create node for ros
     rospy.init_node('obj' + str(numObject), anonymous=True)
-
 
     #create an instance to control the left limb
     left_limb = Limb('left')
@@ -126,9 +137,14 @@ def detect(numObject:int = 1):
     #create an instance to control the left gripper
     left_gripper = Gripper('left')
 
-
     # check for exist files with coordinate dataset
-    if exists(coordPath['init']) and exists(coordPath['pose0']) and exists(coordPath['pose1']):
+    if exists(
+        coordPath['init']
+    ) and exists(
+        coordPath['pose0']
+    ) and exists(
+        coordPath['pose1']
+    ):
         with open(coordPath['init'], 'r') as jsonFile:
             initData = json.load(jsonFile)
         with open(coordPath['pose0'], 'r') as jsonFile:
@@ -151,12 +167,11 @@ def detect(numObject:int = 1):
         with open(coordPath['lastState'], 'w') as jsonFile:
             json.dump(lastState, jsonFile, indent=4)
 
-
     if lastState['pickUp'] and lastState['object'] == numObject:
         # if the robot is already in the requested state, then do nothing
         sys.exit(1)
     elif lastState['pickUp'] and lastState['object'] != numObject:
-        # if the robot holds another object in its grip, 
+        # if the robot holds another object in its grip,
         # then first you need to put it in its original position
         if lastState['gripper']:
             setAngles(coordPos0[lastState['numPose']], angles)
@@ -189,25 +204,43 @@ def detect(numObject:int = 1):
 
     # create a camera instance
     cm = camModule("left")
-    time.sleep(5) 
+    time.sleep(5)
 
     # get image from camera
     image = cm.getImage()
-    time.sleep(1) 
+    time.sleep(1)
 
     # get the bounding box of the grid
     cord = DtD.getCoordinates(image, 0)
-    cv2.rectangle(image, (cord[1], cord[3]), (cord[2], cord[4]), (255,0,0), 1)
+    cv2.rectangle(
+        image,
+        (cord[1], cord[3]),
+        (cord[2], cord[4]),
+        (255, 0, 0),
+        1
+    )
     # cv2.imshow("",image)
 
     # get the bounding box of obj1
-    cordO1  = DtObj1.getCoordinates(image, 0)
-    cv2.rectangle(image, (cordO1[1], cordO1[3]), (cordO1[2], cordO1[4]), (0,255,0), 1)
+    cordO1 = DtObj1.getCoordinates(image, 0)
+    cv2.rectangle(
+        image,
+        (cordO1[1], cordO1[3]),
+        (cordO1[2], cordO1[4]),
+        (0, 255, 0),
+        1
+    )
     # cv2.imshow("1",image)
-    
+
     # get the bounding box of obj2
-    cordO2  = DtObj2.getCoordinates(image, 2)
-    cv2.rectangle(image, (cordO2[1], cordO2[3]), (cordO2[2], cordO2[4]), (0,0,255), 1)
+    cordO2 = DtObj2.getCoordinates(image, 2)
+    cv2.rectangle(
+        image,
+        (cordO2[1], cordO2[3]),
+        (cordO2[2], cordO2[4]),
+        (0, 0, 255),
+        1
+    )
     # cv2.imshow("1",image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
@@ -217,13 +250,13 @@ def detect(numObject:int = 1):
         numPose = DtGetNumPosition(cord, cordO1)
     elif numObject == 2:
         numPose = DtGetNumPosition(cord, cordO2)
-    else: 
+    else:
         print("Invalid object number")
         sys.exit(1)
 
     adressPose = numPose.getNumPosition()
     print(f"{adressPose}")
-    
+
     w = 0.0
     rotate = []
     for j in range(8):
@@ -237,27 +270,59 @@ def detect(numObject:int = 1):
             clearAngles(angles)
         if j != 0:
             w = (float(j) / 10.0) * 2
-        
+
         imageR = cm.getImage()
-        time.sleep(0.1) 
+        time.sleep(0.1)
         rot_cord = DtD.getCoordinates(imageR, 0)
-        cv2.rectangle(imageR, (rot_cord[1], rot_cord[3]), (rot_cord[2], rot_cord[4]), (255,0,0), 1)
-        rot_cordO1  = DtObj1.getCoordinates(imageR, 0)
-        cv2.rectangle(imageR, (rot_cordO1[1], rot_cordO1[3]), (rot_cordO1[2], rot_cordO1[4]), (0,255,0), 1)
-        rot_cordO2  = DtObj2.getCoordinates(imageR, 2)
-        cv2.rectangle(imageR, (rot_cordO2[1], rot_cordO2[3]), (rot_cordO2[2], rot_cordO2[4]), (0,0,255), 1)
+        cv2.rectangle(
+            imageR,
+            (rot_cord[1], rot_cord[3]),
+            (rot_cord[2], rot_cord[4]),
+            (255, 0, 0),
+            1
+        )
+        rot_cordO1 = DtObj1.getCoordinates(imageR, 0)
+        cv2.rectangle(
+            imageR,
+            (rot_cordO1[1], rot_cordO1[3]),
+            (rot_cordO1[2], rot_cordO1[4]),
+            (0, 255, 0),
+            1
+        )
+        rot_cordO2 = DtObj2.getCoordinates(imageR, 2)
+        cv2.rectangle(
+            imageR,
+            (rot_cordO2[1], rot_cordO2[3]),
+            (rot_cordO2[2], rot_cordO2[4]),
+            (0, 0, 255),
+            1
+        )
 
         if numObject == 1:
             if rot_cordO1[0]:
-                rotate.append([(rot_cordO1[2] - rot_cordO1[1]) + (rot_cordO1[4] - rot_cordO1[3]), w])
-            else: 
+                rotate.append([
+                    (
+                        rot_cordO1[2] - rot_cordO1[1]
+                    ) + (
+                        rot_cordO1[4] - rot_cordO1[3]
+                    ),
+                    w
+                ])
+            else:
                 sys.exit(0)
         elif numObject == 2:
             if rot_cordO2[0]:
-                rotate.append([(rot_cordO2[2] - rot_cordO2[1]) + (rot_cordO2[4] - rot_cordO2[3]), w])
-            else: 
+                rotate.append([
+                    (
+                        rot_cordO2[2] - rot_cordO2[1]
+                    ) + (
+                        rot_cordO2[4] - rot_cordO2[3]
+                    ),
+                    w
+                ])
+            else:
                 sys.exit(0)
-        else: 
+        else:
             print("Invalid object number")
             sys.exit(1)
     lRotate = rotate[0][0]
